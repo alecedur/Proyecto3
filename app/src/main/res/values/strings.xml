@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Proyecto 3</string>
+    <string name="boton1">Boton 1</string>
+    <string name="boton2">Boton 2</string>
+    <string name="boton3">Boton 3</string>
+    <string name="boton4">Boton 4</string>
+    <string name="boton5">Boton 5</string>
+    <string name="boton6">Boton 6</string>
+    <string name="Inicio">Inicio</string>
+    <string name="Main_Menu">Main Menu</string>
+    <string name="High_Scores">High Scores</string>
+    <string name="title_activity_high_scores">HighScores</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>
