@@ -40,7 +40,7 @@ class SplashActivity : AppCompatActivity() {
         buttonHS.setOnClickListener(View.OnClickListener {
             // Start your app main activity
 
-            //startActivity(Intent(this,HighScores2::class.java))
+            startActivity(Intent(this,HighScores::class.java))
 
             // close this activity
             finish()
