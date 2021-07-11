@@ -85,18 +85,57 @@ public class CirclesDrawingView : FrameLayout {
         btn.setLayoutParams(FrameLayout.LayoutParams(200, 200))
         btn.text = "up"
         var btn2 = Button(ct)
-        btn2.x = 200F
+        btn2.x = 100F
         btn2.y = 400F
         btn2.setLayoutParams(FrameLayout.LayoutParams(200, 200))
         btn2.text = "down"
+        var btn3 = Button(ct)
+        btn3.x = 400F
+        btn3.y = 300F
+        btn3.setLayoutParams(FrameLayout.LayoutParams(200, 200))
+        btn3.text = "left"
+        var btn4 = Button(ct)
+        btn4.x = 0F
+        btn4.y = 300F
+        btn4.setLayoutParams(FrameLayout.LayoutParams(200, 200))
+        btn4.text = "right"
         btn.setOnClickListener {
             Log.w(TAG, "btn")
+            for(element in mCircles) {
+                element.centerY -= 100
+            }
+            invalidate()
         }
         btn2.setOnClickListener {
             Log.w(TAG, "btn2")
+            var touchedCircle: CircleArea?
+            for(element in mCircles) {
+                element.centerY += 100
+            }
+            invalidate()
+
         }
+        btn3.setOnClickListener {
+            Log.w(TAG, "btn3")
+            var touchedCircle: CircleArea?
+            for(element in mCircles) {
+                element.centerX += 100
+            }
+            invalidate()
+        }
+        btn4.setOnClickListener {
+            Log.w(TAG, "btn4")
+            var touchedCircle: CircleArea?
+            for(element in mCircles) {
+                element.centerX -= 100
+            }
+            invalidate()
+        }
+
         this.addView(btn)
         this.addView(btn2)
+        this.addView(btn3)
+        this.addView(btn4)
     }
 
     public override fun onDraw(canv: Canvas) {
