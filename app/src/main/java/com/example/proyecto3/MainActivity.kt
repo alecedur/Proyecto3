@@ -1,9 +1,9 @@
 package com.example.proyecto3
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.*
 import android.os.Bundle
-import android.os.SystemClock
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
@@ -13,7 +13,6 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.getSystemService
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -31,6 +30,10 @@ public class CirclesDrawingView : FrameLayout {
     /** Main bitmap  */
     private var mBitmap: Bitmap? = null
     private var mMeasuredRect: Rect? = null
+    var endPointX = 1
+    var endPointY = 1
+    var startPointX = 1
+    var startPointY = 1
 
 
     /** Stores data about single circle  */
@@ -76,11 +79,9 @@ public class CirclesDrawingView : FrameLayout {
 
     private fun init(ct: Context) {
         // Generate bitmap used for background
-        val displayMetrics = DisplayMetrics()
-        val windowManager = this.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
-        var width = displayMetrics.widthPixels
-        var height = displayMetrics.heightPixels
+        var width = Resources.getSystem().getDisplayMetrics().widthPixels
+        var height = Resources.getSystem().getDisplayMetrics().heightPixels
 
         mCirclePaint = Paint()
         mCirclePaint!!.color = Color.BLUE
@@ -109,7 +110,12 @@ public class CirclesDrawingView : FrameLayout {
         btn.setOnClickListener {
             Log.w(TAG, "btn")
             for(element in mCircles) {
-                element.centerY -= 100
+                if(element.centerY - 100 < 0) {
+
+                } else {
+                    element.centerY -= 100
+                }
+
             }
             invalidate()
         }
@@ -117,7 +123,10 @@ public class CirclesDrawingView : FrameLayout {
             Log.w(TAG, "btn2")
             var touchedCircle: CircleArea?
             for(element in mCircles) {
-                element.centerY += 100
+                if(element.centerY + 100 > 1900) {
+                } else {
+                    element.centerY += 100
+                }
             }
             invalidate()
 
@@ -126,7 +135,12 @@ public class CirclesDrawingView : FrameLayout {
             Log.w(TAG, "btn3")
             var touchedCircle: CircleArea?
             for(element in mCircles) {
-                element.centerX += 100
+                    if(element.centerX + 100 > 1080) {
+
+                    }
+                    else {
+                        element.centerX += 100
+                    }
             }
             invalidate()
         }
@@ -134,7 +148,12 @@ public class CirclesDrawingView : FrameLayout {
             Log.w(TAG, "btn4")
             var touchedCircle: CircleArea?
             for(element in mCircles) {
-                element.centerX -= 100
+                if(element.centerX - 100 < 0) {
+
+                } else {
+                    element.centerX -= 100
+                }
+
             }
             invalidate()
         }
@@ -143,6 +162,15 @@ public class CirclesDrawingView : FrameLayout {
         this.addView(btn2)
         this.addView(btn3)
         this.addView(btn4)
+        for(element in mCircles) {
+            element.centerX = 540
+            element.centerY = 1036
+        }
+
+        var touchedCircle =
+            CircleArea(536, 864, RADIUS_LIMIT)
+        mCircles.add(touchedCircle)
+        invalidate()
     }
 
     public override fun onDraw(canv: Canvas) {
@@ -253,7 +281,7 @@ public class CirclesDrawingView : FrameLayout {
         var touchedCircle = getTouchedCircle(xTouch, yTouch)
         if (null == touchedCircle) {
             touchedCircle =
-                CircleArea(xTouch, yTouch, mRadiusGenerator.nextInt(RADIUS_LIMIT) + RADIUS_LIMIT)
+                CircleArea(xTouch, yTouch, RADIUS_LIMIT)
             if (mCircles.size === CirclesDrawingView.Companion.CIRCLES_LIMIT) {
                 Log.w(TAG, "Clear all circles, size is " + mCircles.size)
                 // remove first circle
