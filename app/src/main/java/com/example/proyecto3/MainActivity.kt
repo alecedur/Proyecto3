@@ -5,12 +5,15 @@ import android.graphics.*
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.getSystemService
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -22,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         val view = CirclesDrawingView(this)
         setContentView(view)
     }
-
 }
 
 public class CirclesDrawingView : FrameLayout {
@@ -74,31 +76,36 @@ public class CirclesDrawingView : FrameLayout {
 
     private fun init(ct: Context) {
         // Generate bitmap used for background
+        val displayMetrics = DisplayMetrics()
+        val windowManager = this.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        var width = displayMetrics.widthPixels
+        var height = displayMetrics.heightPixels
 
         mCirclePaint = Paint()
         mCirclePaint!!.color = Color.BLUE
         mCirclePaint!!.strokeWidth = 40f
         mCirclePaint!!.style = Paint.Style.FILL
         btn = Button(ct)
-        btn.x = 100F
-        btn.y = 200F
+        btn.x = 200F+200F+20F+10F+10F
+        btn.y = 1400F
         btn.setLayoutParams(FrameLayout.LayoutParams(200, 200))
         btn.text = "up"
         var btn2 = Button(ct)
-        btn2.x = 100F
-        btn2.y = 400F
+        btn2.x = 200F+200F+20F+10F+10F
+        btn2.y = 1600F
         btn2.setLayoutParams(FrameLayout.LayoutParams(200, 200))
         btn2.text = "down"
         var btn3 = Button(ct)
-        btn3.x = 400F
-        btn3.y = 300F
+        btn3.x = 400F+200F+20F+10F+10F
+        btn3.y = 1500F
         btn3.setLayoutParams(FrameLayout.LayoutParams(200, 200))
-        btn3.text = "left"
+        btn3.text = "right"
         var btn4 = Button(ct)
-        btn4.x = 0F
-        btn4.y = 300F
+        btn4.x = 0F+200F+20F+10F+10F
+        btn4.y = 1500F
         btn4.setLayoutParams(FrameLayout.LayoutParams(200, 200))
-        btn4.text = "right"
+        btn4.text = "left"
         btn.setOnClickListener {
             Log.w(TAG, "btn")
             for(element in mCircles) {
