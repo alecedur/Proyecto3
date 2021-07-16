@@ -4,16 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.*
-import android.os.Build
 import android.os.Bundle
-import android.telecom.Call.Details
 import android.util.AttributeSet
 import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.FrameLayout
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.abs
 import kotlin.random.Random
@@ -39,6 +36,7 @@ public class CirclesDrawingView : FrameLayout {
     var drawEnd = true
     var gameCircle : CircleArea? = null
     var endCircle : CircleArea? = null
+    var tStart : Long = 1
 
 
 
@@ -183,6 +181,7 @@ public class CirclesDrawingView : FrameLayout {
         this.addView(btn2)
         this.addView(btn3)
         this.addView(btn4)
+        tStart = System.currentTimeMillis()
 //        for(element in mCircles) {
 //            element.centerX = 540
 //            element.centerY = 1036
@@ -208,10 +207,12 @@ public class CirclesDrawingView : FrameLayout {
         var gameCenterY = gameCircle?.centerY
         var endCenterX = endCircle?.centerX
         var endCenterY = endCircle?.centerY
-
         if (gameCenterX != null) {
             if (gameCenterY != null) {
                 if((abs(gameCenterX - endCenterX!!) < 70) && abs(gameCenterY - endCenterY!!) < 70) {
+                    val tEnd = System.currentTimeMillis()
+                    val tDelta: Long = tEnd - tStart
+                    val elapsedSeconds = tDelta / 1000.0
                     val i = Intent(context, InsertName::class.java)
                     i.flags = Intent.FLAG_ACTIVITY_NEW_TASK //add this line
                     context.startActivity(i)
