@@ -1,20 +1,22 @@
 package com.example.proyecto3
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.*
+import android.os.Build
 import android.os.Bundle
+import android.telecom.Call.Details
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.util.Log
 import android.util.SparseArray
 import android.view.MotionEvent
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import java.util.*
-import kotlin.collections.HashSet
+import kotlin.math.abs
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,13 +36,20 @@ public class CirclesDrawingView : FrameLayout {
     var endPointY = 1
     var startPointX = 1
     var startPointY = 1
+    var drawEnd = true
+    var gameCircle : CircleArea? = null
+    var endCircle : CircleArea? = null
+
+
 
 
     /** Stores data about single circle  */
-    private class CircleArea internal constructor(
+    class CircleArea internal constructor(
         var centerX: Int,
         var centerY: Int,
-        var radius: Int
+        var radius: Int,
+        var id: Int,
+        var color: Paint
     ) {
         override fun toString(): String {
             return "Circle[$centerX, $centerY, $radius]"
@@ -49,7 +58,6 @@ public class CirclesDrawingView : FrameLayout {
 
     /** Paint to draw circles  */
     private var mCirclePaint: Paint? = null
-    private val mRadiusGenerator: Random = Random()
 
     /** All available circles  */
     private val mCircles = HashSet<CircleArea>(CIRCLES_LIMIT)
@@ -75,6 +83,13 @@ public class CirclesDrawingView : FrameLayout {
     constructor(ct: Context, attrs: AttributeSet?, defStyle: Int) : super(ct, attrs, defStyle) {
         this.setWillNotDraw(false)
         init(ct)
+    }
+
+    private fun generaStartEndPoints() {
+        endPointX = Random.nextInt(Resources.getSystem().getDisplayMetrics().widthPixels)
+        endPointY = Random.nextInt(Resources.getSystem().getDisplayMetrics().heightPixels - 200)
+        startPointX = Random.nextInt(Resources.getSystem().getDisplayMetrics().widthPixels)
+        startPointY = Random.nextInt(Resources.getSystem().getDisplayMetrics().heightPixels- 200)
     }
 
     private fun init(ct: Context) {
@@ -110,12 +125,13 @@ public class CirclesDrawingView : FrameLayout {
         btn.setOnClickListener {
             Log.w(TAG, "btn")
             for(element in mCircles) {
-                if(element.centerY - 100 < 0) {
+                if(element.id == 1) {
+                    if(element.centerY - 100 < 0) {
 
-                } else {
-                    element.centerY -= 100
+                    } else {
+                        element.centerY -= 100
+                    }
                 }
-
             }
             invalidate()
         }
@@ -123,9 +139,11 @@ public class CirclesDrawingView : FrameLayout {
             Log.w(TAG, "btn2")
             var touchedCircle: CircleArea?
             for(element in mCircles) {
-                if(element.centerY + 100 > 1900) {
-                } else {
-                    element.centerY += 100
+                if(element.id == 1 ) {
+                    if(element.centerY + 100 > 1900) {
+                    } else {
+                        element.centerY += 100
+                    }
                 }
             }
             invalidate()
@@ -135,12 +153,14 @@ public class CirclesDrawingView : FrameLayout {
             Log.w(TAG, "btn3")
             var touchedCircle: CircleArea?
             for(element in mCircles) {
+                if(element.id == 1 ) {
                     if(element.centerX + 100 > 1080) {
 
                     }
                     else {
                         element.centerX += 100
                     }
+                }
             }
             invalidate()
         }
@@ -148,12 +168,13 @@ public class CirclesDrawingView : FrameLayout {
             Log.w(TAG, "btn4")
             var touchedCircle: CircleArea?
             for(element in mCircles) {
-                if(element.centerX - 100 < 0) {
+                if(element.id == 1) {
+                    if(element.centerX - 100 < 0) {
 
-                } else {
-                    element.centerX -= 100
+                    } else {
+                        element.centerX -= 100
+                    }
                 }
-
             }
             invalidate()
         }
@@ -162,25 +183,53 @@ public class CirclesDrawingView : FrameLayout {
         this.addView(btn2)
         this.addView(btn3)
         this.addView(btn4)
-        for(element in mCircles) {
-            element.centerX = 540
-            element.centerY = 1036
-        }
+//        for(element in mCircles) {
+//            element.centerX = 540
+//            element.centerY = 1036
+//        }
 
-        var touchedCircle =
-            CircleArea(536, 864, RADIUS_LIMIT)
-        mCircles.add(touchedCircle)
+        //var touchedCircle =
+            //CircleArea(536, 864, RADIUS_LIMIT)
+        generaStartEndPoints()
+        gameCircle =
+            CircleArea(startPointX, startPointY, RADIUS_LIMIT, 1, mCirclePaint!!)
+        mCircles.add(gameCircle!!)
+        var mCirclePaint2 = Paint()
+        mCirclePaint2!!.color = Color.RED
+        mCirclePaint2!!.strokeWidth = 40f
+        mCirclePaint2!!.style = Paint.Style.FILL
+        endCircle = CircleArea(endPointX, endPointY, RADIUS_LIMIT,2, mCirclePaint2)
+        mCircles.add(endCircle!!)
         invalidate()
+    }
+
+    public fun didWeWin() {
+        var gameCenterX = gameCircle?.centerX
+        var gameCenterY = gameCircle?.centerY
+        var endCenterX = endCircle?.centerX
+        var endCenterY = endCircle?.centerY
+
+        if (gameCenterX != null) {
+            if (gameCenterY != null) {
+                if((abs(gameCenterX - endCenterX!!) < 70) && abs(gameCenterY - endCenterY!!) < 70) {
+                    val i = Intent(context, InsertName::class.java)
+                    i.flags = Intent.FLAG_ACTIVITY_NEW_TASK //add this line
+                    context.startActivity(i)
+                    (context as? MainActivity)?.finish()
+                }
+            }
+        }
     }
 
     public override fun onDraw(canv: Canvas) {
         // background bitmap to cover all area
+        didWeWin()
         mBitmap?.let { mMeasuredRect?.let { it1 -> canv.drawBitmap(it, null, it1, null) } }
         for (circle in mCircles) {
-            canv.drawCircle(
-                circle.centerX.toFloat(), circle.centerY.toFloat(), circle.radius.toFloat(),
-                mCirclePaint!!
-            )
+                canv.drawCircle(
+                    circle.centerX.toFloat(), circle.centerY.toFloat(), circle.radius.toFloat(),
+                    circle.color!!
+                )
         }
     }
 
@@ -194,33 +243,33 @@ public class CirclesDrawingView : FrameLayout {
         var actionIndex = event.actionIndex
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                // it's the first pointer, so clear all existing pointers data
-                clearCirclePointer()
-                xTouch = event.getX(0).toInt()
-                yTouch = event.getY(0).toInt()
-
-                // check if we've touched inside some circle
-                touchedCircle = obtainTouchedCircle(xTouch, yTouch)
-                touchedCircle.centerX = xTouch
-                touchedCircle.centerY = yTouch
-                mCirclePointer.put(event.getPointerId(0), touchedCircle)
-                invalidate()
-                handled = true
+//                // it's the first pointer, so clear all existing pointers data
+//                clearCirclePointer()
+//                xTouch = event.getX(0).toInt()
+//                yTouch = event.getY(0).toInt()
+//
+//                // check if we've touched inside some circle
+//                touchedCircle = obtainTouchedCircle(xTouch, yTouch)
+//                touchedCircle.centerX = xTouch
+//                touchedCircle.centerY = yTouch
+//                mCirclePointer.put(event.getPointerId(0), touchedCircle)
+//                invalidate()
+//                handled = true
             }
             MotionEvent.ACTION_POINTER_DOWN -> {
-                Log.w(TAG, "Pointer down")
-                // It secondary pointers, so obtain their ids and check circles
-                pointerId = event.getPointerId(actionIndex)
-                xTouch = event.getX(actionIndex).toInt()
-                yTouch = event.getY(actionIndex).toInt()
-
-                // check if we've touched inside some circle
-                touchedCircle = obtainTouchedCircle(xTouch, yTouch)
-                mCirclePointer.put(pointerId, touchedCircle)
-                touchedCircle.centerX = xTouch
-                touchedCircle.centerY = yTouch
-                invalidate()
-                handled = true
+//                Log.w(TAG, "Pointer down")
+//                // It secondary pointers, so obtain their ids and check circles
+//                pointerId = event.getPointerId(actionIndex)
+//                xTouch = event.getX(actionIndex).toInt()
+//                yTouch = event.getY(actionIndex).toInt()
+//
+//                // check if we've touched inside some circle
+//                //touchedCircle = obtainTouchedCircle(xTouch, yTouch)
+//                mCirclePointer.put(pointerId, touchedCircle)
+//                touchedCircle.centerX = xTouch
+//                touchedCircle.centerY = yTouch
+//                invalidate()
+//                handled = true
             }
             MotionEvent.ACTION_MOVE -> {
                 val pointerCount = event.pointerCount
@@ -269,29 +318,22 @@ public class CirclesDrawingView : FrameLayout {
         mCirclePointer.clear()
     }
 
-    /**
-     * Search and creates new (if needed) circle based on touch area
-     *
-     * @param xTouch int x of touch
-     * @param yTouch int y of touch
-     *
-     * @return obtained [CircleArea]
-     */
-    private fun obtainTouchedCircle(xTouch: Int, yTouch: Int): CircleArea {
-        var touchedCircle = getTouchedCircle(xTouch, yTouch)
-        if (null == touchedCircle) {
-            touchedCircle =
-                CircleArea(xTouch, yTouch, RADIUS_LIMIT)
-            if (mCircles.size === CirclesDrawingView.Companion.CIRCLES_LIMIT) {
-                Log.w(TAG, "Clear all circles, size is " + mCircles.size)
-                // remove first circle
-                mCircles.clear()
-            }
-            Log.w(TAG, "Added circle $touchedCircle")
-            mCircles.add(touchedCircle)
-        }
-        return touchedCircle
-    }
+
+//    private fun obtainTouchedCircle(xTouch: Int, yTouch: Int): CircleArea {
+//        var touchedCircle = getTouchedCircle(xTouch, yTouch)
+//        if (null == touchedCircle) {
+//            touchedCircle =
+//                CircleArea(xTouch, yTouch, RADIUS_LIMIT, 1, mCirclePaint)
+//            if (mCircles.size === CirclesDrawingView.Companion.CIRCLES_LIMIT) {
+//                Log.w(TAG, "Clear all circles, size is " + mCircles.size)
+//                // remove first circle
+//                mCircles.clear()
+//            }
+//            Log.w(TAG, "Added circle $touchedCircle")
+//            mCircles.add(touchedCircle)
+//        }
+//        return touchedCircle
+//    }
 
     /**
      * Determines touched circle
