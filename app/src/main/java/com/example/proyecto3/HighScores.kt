@@ -33,10 +33,13 @@ class HighScores : AppCompatActivity() {
         // and key must be same which is send by first activity
         val str = intent.getStringExtra("message_key")
 
+        val score = intent.getStringExtra("score_key")
+
 
 
         //display name sent
         receiver_msg.setText(str)
+        received_score_1.setText(score)
 
         //boton splash activity
         buttonMainMenu.setOnClickListener(View.OnClickListener {

@@ -84,18 +84,16 @@ public class CirclesDrawingView : FrameLayout {
     }
 
     private fun generaStartEndPoints() {
-        endPointX = Random.nextInt(Resources.getSystem().getDisplayMetrics().widthPixels)
-        endPointY = Random.nextInt(Resources.getSystem().getDisplayMetrics().heightPixels - 200)
-        startPointX = Random.nextInt(Resources.getSystem().getDisplayMetrics().widthPixels)
-        startPointY = Random.nextInt(Resources.getSystem().getDisplayMetrics().heightPixels- 200)
+        var width = Resources.getSystem().getDisplayMetrics().widthPixels
+        var height = Resources.getSystem().getDisplayMetrics().heightPixels
+        endPointX = (Random.nextInt(Resources.getSystem().getDisplayMetrics().widthPixels)/100)*100
+        endPointY = (Random.nextInt(14)+2)*100
+        startPointX = (Random.nextInt(Resources.getSystem().getDisplayMetrics().widthPixels)/100)*100
+        startPointY = (Random.nextInt(14)+2)*100
     }
 
     private fun init(ct: Context) {
         // Generate bitmap used for background
-
-        var width = Resources.getSystem().getDisplayMetrics().widthPixels
-        var height = Resources.getSystem().getDisplayMetrics().heightPixels
-
         mCirclePaint = Paint()
         mCirclePaint!!.color = Color.BLUE
         mCirclePaint!!.strokeWidth = 40f
@@ -124,8 +122,7 @@ public class CirclesDrawingView : FrameLayout {
             Log.w(TAG, "btn")
             for(element in mCircles) {
                 if(element.id == 1) {
-                    if(element.centerY - 100 < 0) {
-
+                    if(element.centerY - 100 < 100) {
                     } else {
                         element.centerY -= 100
                     }
@@ -138,7 +135,7 @@ public class CirclesDrawingView : FrameLayout {
             var touchedCircle: CircleArea?
             for(element in mCircles) {
                 if(element.id == 1 ) {
-                    if(element.centerY + 100 > 1900) {
+                    if(element.centerY + 100 > 1400) {
                     } else {
                         element.centerY += 100
                     }
@@ -213,8 +210,10 @@ public class CirclesDrawingView : FrameLayout {
                     val tEnd = System.currentTimeMillis()
                     val tDelta: Long = tEnd - tStart
                     val elapsedSeconds = tDelta / 1000.0
+                    val str: String = elapsedSeconds.toString()
                     val i = Intent(context, InsertName::class.java)
                     i.flags = Intent.FLAG_ACTIVITY_NEW_TASK //add this line
+                    i.putExtra("score_key", str)
                     context.startActivity(i)
                     (context as? MainActivity)?.finish()
                 }
@@ -318,6 +317,7 @@ public class CirclesDrawingView : FrameLayout {
         Log.w(TAG, "clearCirclePointer")
         mCirclePointer.clear()
     }
+
 
 
 //    private fun obtainTouchedCircle(xTouch: Int, yTouch: Int): CircleArea {
