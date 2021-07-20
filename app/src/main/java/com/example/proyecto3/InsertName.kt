@@ -19,7 +19,8 @@ class InsertName : AppCompatActivity() {
 
             val str: String = sendText.getText().toString()
 
-            // Create the Intent object of this class Context() to Second_activity class
+
+
             // Create the Intent object of this class Context() to Second_activity class
             val intent = Intent(applicationContext, HighScores::class.java)
 
@@ -27,9 +28,10 @@ class InsertName : AppCompatActivity() {
             // key is message_key by this key we will receive the value, and put the string
             intent.putExtra("message_key", str)
 
+            val score = intent.getStringExtra("score_key")
+
             // start the Intent
             startActivity(intent)
-            //startActivity(Intent(this,HighScores::class.java))
 
             // close this activity
             finish()
